@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRIVEST: Interactive AI Developer Roadmap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #3f3c3a;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #d1c7bd;
+            border: 4px solid #f8f7f4;
+        }
+        .timeline-item.completed::before {
+            background-color: #4a7c59;
+        }
+        .skill-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .skill-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#3f3c3a]">AI Developer Roadmap</h1>
+            <p class="mt-2 text-lg text-[#6e6a67]">Your 6-Month Journey to Building the <span class="font-semibold text-[#4a7c59]">AGRIVEST</span> AI Engine</p>
+        </header>
+
+        <main>
+            <!-- Progress Dashboard -->
+            <section id="dashboard" class="mb-12 bg-white rounded-2xl shadow-sm p-6">
+                <h2 class="text-2xl font-bold mb-4 text-center">Your Progress Dashboard</h2>
+                <div class="flex flex-col md:flex-row items-center justify-around gap-8">
+                    <div class="chart-container w-full max-w-xs mx-auto h-64 md:h-72">
+                        <canvas id="overallProgressChart"></canvas>
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <p class="text-center text-[#6e6a67] mb-4">Track your overall completion and mastery of key AI domains required for the project.</p>
+                        <div id="domainProgress" class="space-y-3">
+                            <!-- Domain progress bars will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Timeline -->
+            <section id="timeline">
+                <div class="relative border-l-2 border-dashed border-gray-300 ml-6 pl-10 space-y-12">
+                    <!-- Months will be injected here by JS -->
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="projectModal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 transform scale-95">
+            <div class="flex justify-between items-start">
+                <h3 id="modalTitle" class="text-2xl font-bold text-[#3f3c3a]"></h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="modalContent" class="mt-4 text-[#6e6a67] space-y-4">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const roadmapData = [
+            {
+                month: 1,
+                title: "The Data Science Foundation",
+                goal: "Master the art of manipulating and analyzing complex data. Your models are only as good as the data you feed them.",
+                domain: "Data Analysis",
+                skills: [
+                    { name: "Advanced Pandas", description: "Master `groupby()`, `merge()`, time-series analysis with `datetime` objects, resampling, and window functions. Critical for weather and price data." },
+                    { name: "NumPy", description: "Learn fast numerical computation, array manipulation, broadcasting, and linear algebra functions." },
+                    { name: "Data Visualization", description: "Use Matplotlib & Seaborn to create insightful plots like line charts, histograms, and scatter plots to understand data." },
+                    { name: "Geospatial Data (GeoPandas)", description: "Handle shapefiles and plot farm locations on a map, essential for geo-tagged project data." }
+                ],
+                project: {
+                    title: "West Bengal Crop Analysis",
+                    description: "Find public datasets from sources like `data.gov.in` or FAOSTAT for crop yields in West Bengal. Combine this with historical weather data for the region. Your goal is to clean the data, merge it, and create visualizations that answer questions like: 'How did paddy yield correlate with rainfall in the Murshidabad district over the last 5 years?'"
+                }
+            },
+            {
+                month: 2,
+                title: "Practical Machine Learning",
+                goal: "Build your first predictive models using established, powerful algorithms. This covers the initial versions of your risk and prediction engines.",
+                domain: "Classical ML",
+                skills: [
+                    { name: "Scikit-Learn", description: "Understand the full workflow: data preprocessing (scaling, encoding), model training (`.fit()`), and prediction (`.predict()`)." },
+                    { name: "Key Algorithms", description: "Learn Linear/Logistic Regression, Decision Trees/Random Forests, and especially Gradient Boosting (XGBoost & LightGBM) for tabular data." },
+                    { name: "Model Validation", description: "Master train-test splits, cross-validation, and key metrics like Accuracy, Precision, Recall, F1-Score, and RMSE." }
+                ],
+                project: {
+                    title: "Build the v1 Risk Assessment Model",
+                    description: "Find a dataset on Kaggle related to loan default prediction. Treat each loan applicant as a 'farm investment.' Use XGBoost to build a model that predicts the probability of default (i.e., 'high-risk investment'). This directly mimics the logic of your Risk Assessment Engine."
+                }
+            },
+            {
+                month: 3,
+                title: "Deep Learning for Sequences & Forecasting",
+                goal: "Tackle time-series data using neural networks to build more sophisticated forecasting models.",
+                domain: "Deep Learning",
+                skills: [
+                    { name: "TensorFlow with Keras", description: "Choose this framework as a direct path to TensorFlow Lite. Keras provides a user-friendly API." },
+                    { name: "Fundamentals of Neural Networks", description: "Understand neurons, layers, activation functions (ReLU), and the concept of backpropagation." },
+                    { name: "Recurrent Neural Networks (RNNs)", description: "Master LSTMs and GRUs, which are specifically designed for time-series forecasting and will be the core of your advanced Yield & Profitability model." }
+                ],
+                project: {
+                    title: "Build the v1 Yield Forecasting Model",
+                    description: "Use the dataset from your Month 1 project. This time, instead of just statistical correlation, build an LSTM model that takes the last 30 days of weather data as input to predict the final crop yield. Compare its performance to a simpler model."
+                }
+            },
+            {
+                month: 4,
+                title: "Computer Vision for Verification",
+                goal: "Learn to analyze images to power the 'Ghost Informer' system. This is the most exciting part!",
+                domain: "Computer Vision",
+                skills: [
+                    { name: "Convolutional Neural Networks (CNNs)", description: "Understand convolutions, pooling layers, and how they 'see' features in images. The foundation of computer vision." },
+                    { name: "Image Classification", description: "Train models to classify images (e.g., tomato vs. potato plant) using architectures like ResNet or EfficientNet." },
+                    { name: "Object Detection", description: "Go beyond classification to draw bounding boxes around objects (e.g., counting crates) using the YOLO model architecture." },
+                    { name: "OpenCV", description: "Use this crucial library for pre-processing images before feeding them to your deep learning models (resizing, changing colors, etc.)." }
+                ],
+                project: {
+                    title: "Build the Crop Verification Pipeline",
+                    description: "Find a public dataset of crop images (e.g., PlantVillage). First, build a classification model to identify the crop type. Then, find a dataset with annotations (or create a small one yourself) and train a basic YOLO model to detect and count a specific fruit or vegetable in an image."
+                }
+            },
+            {
+                month: 5,
+                title: "MLOps - Bringing Your Models to Life",
+                goal: "A model in a notebook is a hobby. A model in production is a product. Learn to deploy your models so they can be used by the app.",
+                domain: "Deployment",
+                skills: [
+                    { name: "API Development with FastAPI", description: "Learn to wrap your trained model in a modern, high-performance web API." },
+                    { name: "Containerization with Docker", description: "A non-negotiable skill. Write a `Dockerfile` to package your app and its dependencies into a portable container." },
+                    { name: "Cloud Fundamentals (AWS)", description: "Focus on the basics of S3 for storing models/datasets and EC2 for renting a virtual server to run your Docker container." }
+                ],
+                project: {
+                    title: "Deploy the Risk Assessor",
+                    description: "Take the XGBoost model you built in Month 2. Wrap it in a FastAPI endpoint. Create a Docker container for it. Run the container on your local machine and use a tool like `requests` in Python to send it new data and get a risk prediction back."
+                }
+            },
+            {
+                month: 6,
+                title: "Automation & Integration",
+                goal: "Put all the pieces together and learn to automate the AI lifecycle.",
+                domain: "Automation",
+                skills: [
+                    { name: "Data Pipelines with Airflow", description: "Learn the basics of creating DAGs to define, schedule, and monitor workflows, automating tasks like model retraining." },
+                    { name: "Model Monitoring", description: "Understand 'data drift' and 'model drift' and the importance of monitoring your model's performance in production." },
+                    { name: "TensorFlow Lite", description: "Learn to convert your trained models into the `.tflite` format, optimizing them for mobile and edge devices." }
+                ],
+                project: {
+                    title: "Automate the Forecast",
+                    description: "Create a simple Airflow DAG that simulates the entire process: (1) a task to download a mock data file, (2) a task to 'retrain' your yield model from Month 3, and (3) a task to save the new model artifact to a directory. This demonstrates a complete, automated ML pipeline."
+                }
+            }
+        ];
+
+        let state = {
+            completedSkills: JSON.parse(localStorage.getItem('completedSkills')) || []
+        };
+        
+        const totalSkills = roadmapData.reduce((acc, month) => acc + month.skills.length, 0);
+
+        function updateState(skillName, isCompleted) {
+            if (isCompleted) {
+                if (!state.completedSkills.includes(skillName)) {
+                    state.completedSkills.push(skillName);
+                }
+            } else {
+                state.completedSkills = state.completedSkills.filter(s => s !== skillName);
+            }
+            localStorage.setItem('completedSkills', JSON.stringify(state.completedSkills));
+            render();
+        }
+
+        function renderTimeline() {
+            const timelineContainer = document.getElementById('timeline').querySelector('div');
+            timelineContainer.innerHTML = '';
+            roadmapData.forEach(monthData => {
+                const monthSkills = monthData.skills.map(s => s.name);
+                const completedInMonth = monthSkills.filter(s => state.completedSkills.includes(s)).length;
+                const progress = monthSkills.length > 0 ? (completedInMonth / monthSkills.length) * 100 : 0;
+                const isMonthCompleted = progress === 100;
+
+                const timelineItem = document.createElement('div');
+                timelineItem.className = `timeline-item relative ${isMonthCompleted ? 'completed' : ''}`;
+                
+                timelineItem.innerHTML = `
+                    <div class="cursor-pointer" data-month="${monthData.month}">
+                        <h3 class="text-2xl font-bold text-[#4a7c59]">Month ${monthData.month}: ${monthData.title}</h3>
+                        <p class="text-[#6e6a67] mt-1">${monthData.goal}</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                            <div class="bg-[#4a7c59] h-2.5 rounded-full" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                    <div id="month-content-${monthData.month}" class="mt-6 hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${monthData.skills.map(skill => `
+                                <div class="skill-card bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#4a7c59] focus:ring-[#4a7c59]" 
+                                               data-skill="${skill.name}" ${state.completedSkills.includes(skill.name) ? 'checked' : ''}>
+                                        <span class="font-semibold text-lg">${skill.name}</span>
+                                    </label>
+                                    <p class="text-gray-600 mt-2 text-sm">${skill.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="mt-8 text-center">
+                            <button class="bg-[#3f3c3a] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#2a2827] transition-colors open-modal-btn" data-month="${monthData.month}">
+                                View Month ${monthData.month} Mini-Project
+                            </button>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.appendChild(timelineItem);
+            });
+        }
+
+        function renderDashboard() {
+            const completedCount = state.completedSkills.length;
+            const remainingCount = totalSkills - completedCount;
+            
+            // Overall Progress Chart
+            const ctx = document.getElementById('overallProgressChart').getContext('2d');
+            if (window.overallChart) {
+                window.overallChart.data.datasets[0].data = [completedCount, remainingCount];
+                window.overallChart.update();
+            } else {
+                window.overallChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'Remaining'],
+                        datasets: [{
+                            data: [completedCount, remainingCount],
+                            backgroundColor: ['#4a7c59', '#e5e7eb'],
+                            borderColor: ['#f8f7f4'],
+                            borderWidth: 4,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Domain Progress Bars
+            const domainProgressContainer = document.getElementById('domainProgress');
+            const domains = {};
+            roadmapData.forEach(month => {
+                if (!domains[month.domain]) {
+                    domains[month.domain] = { total: 0, completed: 0 };
+                }
+                domains[month.domain].total += month.skills.length;
+                month.skills.forEach(skill => {
+                    if (state.completedSkills.includes(skill.name)) {
+                        domains[month.domain].completed++;
+                    }
+                });
+            });
+
+            domainProgressContainer.innerHTML = Object.entries(domains).map(([domain, counts]) => {
+                const progress = counts.total > 0 ? (counts.completed / counts.total) * 100 : 0;
+                return `
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-base font-medium text-[#3f3c3a]">${domain}</span>
+                            <span class="text-sm font-medium text-[#6e6a67]">${counts.completed} / ${counts.total}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-[#a39b8b] h-2.5 rounded-full" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setupEventListeners() {
+            const timelineContainer = document.getElementById('timeline');
+
+            timelineContainer.addEventListener('click', function(e) {
+                // Handle accordion toggle
+                const header = e.target.closest('[data-month]');
+                if (header) {
+                    const month = header.dataset.month;
+                    const content = document.getElementById(`month-content-${month}`);
+                    if (content) {
+                        content.classList.toggle('hidden');
+                    }
+                }
+
+                // Handle checkbox state change
+                if (e.target.matches('input[type="checkbox"]')) {
+                    const skillName = e.target.dataset.skill;
+                    updateState(skillName, e.target.checked);
+                }
+                
+                // Handle modal open
+                if (e.target.matches('.open-modal-btn')) {
+                    const month = e.target.dataset.month;
+                    const monthData = roadmapData.find(m => m.month == month);
+                    if (monthData) {
+                        document.getElementById('modalTitle').innerText = monthData.project.title;
+                        document.getElementById('modalContent').innerHTML = `<p>${monthData.project.description}</p>`;
+                        openModal();
+                    }
+                }
+            });
+
+            // Modal close
+            const modal = document.getElementById('projectModal');
+            const closeModalBtn = document.getElementById('closeModal');
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+        
+        function openModal() {
+            const modal = document.getElementById('projectModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('projectModal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('.modal-content').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('pointer-events-none'), 250);
+        }
+
+        function render() {
+            renderTimeline();
+            renderDashboard();
+        }
+
+        // Initial render
+        render();
+        setupEventListeners();
+
+    </script>
+</body>
+</html>
